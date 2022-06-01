@@ -45,10 +45,10 @@ class SiamMaskTracker(SiamRPNTracker):
             _, contours, _ = cv2.findContours(target_mask,
                                               cv2.RETR_EXTERNAL,
                                               cv2.CHAIN_APPROX_NONE)
-        cnt_area = [cv2.contourArea(cnt) for cnt in contours]
-        if len(contours) != 0 and np.max(cnt_area) > 100:
-            contour = np.concatenate(contours)
-            # contour = contours[np.argmax(cnt_area)]
+
+        contour = np.concatenate(tuple(filter(lambda x: cv2.contourArea(x) > 20, contours)))
+
+        if len(contours) != 0:
             polygon = contour.reshape(-1, 2)
             prbox = cv2.boxPoints(cv2.minAreaRect(polygon))
             rbox_in_img = prbox
